@@ -1,16 +1,14 @@
 @echo off
 title Atualizacao yt-dlp
 color 0E
-echo.
-echo ========================================
-echo    Atualizando yt-dlp
-echo ========================================
-echo.
-echo Isso resolve problemas de erro 403...
-echo.
-pip install --upgrade yt-dlp
-echo.
-echo ========================================
-echo    Atualizacao Concluida!
-echo ========================================
+
+REM Ir para a pasta pai
+cd /d "%~dp0.."
+
+REM Executar atualizador Python universal
+python executaveis\ATUALIZAR.py
+if errorlevel 1 (
+    python3 executaveis\ATUALIZAR.py
+)
+
 pause

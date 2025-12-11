@@ -4,19 +4,29 @@ Aplicação web para baixar vídeos do YouTube com seleção de qualidade.
 
 ## 🚀 Início Rápido
 
-1. **Vá para `executaveis/`**
-2. **Execute `INSTALAR_DEPENDENCIAS.bat`** (primeira vez)
-3. **Execute `INICIAR.bat`**
-4. **Acesse `http://localhost:5000`**
+### Instalação Universal (Windows e Linux)
+1. **Execute `python executaveis/INSTALAR.py`** (primeira vez)
+2. **Execute `python executaveis/INICIAR.py`**
+3. **Acesse `http://localhost:5000`**
+
+### Método Alternativo
+**Windows:** Execute `INSTALAR_DEPENDENCIAS.bat` e depois `INICIAR.bat`
+**Linux:** Execute `./INSTALAR_DEPENDENCIAS.sh` e depois `./INICIAR.sh`
 
 ## 📁 Estrutura
 
 ```
 ├── app.py                    # Aplicação principal
 ├── executaveis/              # Scripts prontos para usar
-│   ├── INICIAR.bat          # ← Clique aqui para iniciar
-│   ├── INSTALAR_DEPENDENCIAS.bat
-│   └── ATUALIZAR_YT-DLP.bat
+│   ├── INSTALAR.py          # ← Universal (Windows + Linux)
+│   ├── INICIAR.py           # ← Universal (Windows + Linux)
+│   ├── ATUALIZAR.py         # ← Universal (Windows + Linux)
+│   ├── INICIAR.bat          # Windows - Clique aqui
+│   ├── INICIAR.sh           # Linux - Execute aqui
+│   ├── INSTALAR_DEPENDENCIAS.bat  # Windows
+│   ├── INSTALAR_DEPENDENCIAS.sh   # Linux
+│   ├── ATUALIZAR_YT-DLP.bat # Windows
+│   └── ATUALIZAR_YT-DLP.sh  # Linux
 ├── docs/                    # Documentação completa
 ├── scripts/                 # Scripts auxiliares
 └── downloads/              # Vídeos baixados
