@@ -127,6 +127,9 @@ HTML = """
       <label for="quality" style="margin-top: 12px;">Qualidade</label>
       <select id="quality" name="quality" style="width: 100%; padding: 9px 11px; border-radius: 10px; border: 1px solid #1f2937; background: #020617; color: #e5e7eb; font-size: 13px; outline: none; box-sizing: border-box;">
         <option value="best">🔥 Melhor qualidade disponível</option>
+        <option value="8k">🌟 8K (7680p) - Ultra HD</option>
+        <option value="4k">💎 4K (2160p) - Ultra HD</option>
+        <option value="2k">🎯 2K (1440p) - Quad HD</option>
         <option value="1080p">📺 1080p (Full HD)</option>
         <option value="720p">📱 720p (HD)</option>
         <option value="480p">💻 480p (SD)</option>
@@ -182,23 +185,26 @@ def index():
                 downloads_dir = str(Path.home() / "Downloads")
                 os.makedirs(downloads_dir, exist_ok=True)
                 
-                # Formatos priorizando MP4 e evitando AV1
+                # Formatos priorizando MP4 e suportando altas resoluções
                 format_map = {
-                    "best": "bestvideo[ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/best[ext=mp4][vcodec^=avc]/best[ext=mp4]/best",
-                    "1080p": "bestvideo[height<=1080][ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4][vcodec^=avc]/best[height<=1080][ext=mp4]/best[height<=1080]",
-                    "720p": "bestvideo[height<=720][ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/best[height<=720][ext=mp4][vcodec^=avc]/best[height<=720][ext=mp4]/best[height<=720]", 
-                    "480p": "bestvideo[height<=480][ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/best[height<=480][ext=mp4][vcodec^=avc]/best[height<=480][ext=mp4]/best[height<=480]",
-                    "360p": "bestvideo[height<=360][ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/best[height<=360][ext=mp4][vcodec^=avc]/best[height<=360][ext=mp4]/best[height<=360]",
-                    "worst": "worst[ext=mp4][vcodec^=avc]/worst[ext=mp4]/worst"
+                    "best": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best[ext=mp4]/best",
+                    "8k": "bestvideo[height<=7680][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=7680]+bestaudio/best[height<=7680][ext=mp4]/best[height<=7680]",
+                    "4k": "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=2160]+bestaudio/best[height<=2160][ext=mp4]/best[height<=2160]",
+                    "2k": "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1440]+bestaudio/best[height<=1440][ext=mp4]/best[height<=1440]",
+                    "1080p": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[height<=1080][ext=mp4]/best[height<=1080]",
+                    "720p": "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio/best[height<=720][ext=mp4]/best[height<=720]", 
+                    "480p": "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=480]+bestaudio/best[height<=480][ext=mp4]/best[height<=480]",
+                    "360p": "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=360]+bestaudio/best[height<=360][ext=mp4]/best[height<=360]",
+                    "worst": "worst[ext=mp4]/worst"
                 }
                 
                 ydl_opts = {
-                    "format": format_map.get(quality, "bestvideo[ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/best[ext=mp4]/best"),
+                    "format": format_map.get(quality, "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"),
                     "outtmpl": os.path.join(downloads_dir, "%(title)s.%(ext)s"),
                     "noplaylist": True,
                     "merge_output_format": "mp4",
                     "prefer_free_formats": False,
-                    "format_sort": ["codec:h264", "ext:mp4"],
+                    "format_sort": ["res", "ext:mp4", "codec:h264"],
                 }
                 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -211,6 +217,9 @@ def index():
                     
                 quality_text = {
                     "best": "melhor qualidade",
+                    "8k": "8K (7680p)",
+                    "4k": "4K (2160p)",
+                    "2k": "2K (1440p)",
                     "1080p": "1080p", 
                     "720p": "720p",
                     "480p": "480p",
