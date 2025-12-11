@@ -1,0 +1,16 @@
+# Ignorar ffmpeg.exe
+ffmpeg.exe
+
+# Ignorar toda a pasta de downloads
+downloads/
+
+# Ignorar outros arquivos grandes/mídia
+*.mp4
+*.mp3
+*.avi
+*.exe
+*.zip
+
+# Ignorar arquivos do Python
+__pycache__/
+*.pyc
