@@ -13,4 +13,6 @@ downloads/
 
 # Ignorar arquivos do Python
 __pycache__/
+*.pycvenv/
+__pycache__/
 *.pyc
