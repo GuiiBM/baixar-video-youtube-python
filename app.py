@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template_string
 import yt_dlp
 import os
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -117,7 +118,7 @@ HTML = """
 <body>
   <div class="card">
     <h1><span class="emoji">🎬</span> YouTube MP4 Downloader</h1>
-    <p class="subtitle">Cole a URL do vídeo do YouTube e ele será baixado em MP4 nesta pasta.</p>
+    <p class="subtitle">Cole a URL do vídeo do YouTube e ele será baixado em MP4 na sua pasta Downloads.</p>
 
     <form method="POST" id="download-form">
       <label for="url">URL do vídeo</label>
@@ -177,8 +178,8 @@ def index():
             error = "Insira uma URL válida."
         else:
             try:
-                # Criar pasta downloads se não existir
-                downloads_dir = os.path.join(os.getcwd(), "downloads")
+                # Usar a pasta Downloads do usuário
+                downloads_dir = str(Path.home() / "Downloads")
                 os.makedirs(downloads_dir, exist_ok=True)
                 
                 # Formatos priorizando MP4 e evitando AV1
@@ -217,7 +218,7 @@ def index():
                     "worst": "menor arquivo"
                 }.get(quality, quality)
                 
-                status = f"✅ '{title}' baixado em {quality_text} na pasta downloads!"
+                status = f"✅ '{title}' baixado em {quality_text} na pasta Downloads!"
                 
             except yt_dlp.DownloadError as e:
                 error = f"Erro no download: {str(e)}"
