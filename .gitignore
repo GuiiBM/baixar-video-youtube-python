@@ -1,18 +1,97 @@
-# Ignorar ffmpeg.exe
-ffmpeg.exe
+# Crie/edit .gitignore
+cat > .gitignore << 'EOF'
+# Ambiente virtual
+venv/
+env/
+.venv/
+venv*/
+ENV/
 
-# Ignorar toda a pasta de downloads
+# Arquivos Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
 downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Ignorar outros arquivos grandes/mídia
-*.mp4
-*.mp3
-*.avi
-*.exe
-*.zip
+# PyInstaller
+*.manifest
+*.spec
 
-# Ignorar arquivos do Python
-__pycache__/
-*.pycvenv/
-__pycache__/
-*.pyc
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Configurações locais
+config_local.py
+.env
+.env.local
+
+# Diretórios de download temporários
+downloads/
+temp/
+tmp/
+
+# Arquivos do projeto específicos (mantenha apenas os necessários)
+# Remova esta linha se quiser manter algum desses diretórios
+# !executaveis/  # Mantém executaveis se necessário
+# !scripts/      # Mantém scripts se necessário
+EOF
