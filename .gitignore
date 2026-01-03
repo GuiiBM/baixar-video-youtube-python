@@ -90,6 +90,16 @@ downloads/
 temp/
 tmp/
 
+# FFmpeg executáveis
+ffmpeg.exe
+ffprobe.exe
+ffplay.exe
+ffmpeg
+ffprobe
+ffplay
+ffmpeg/
+ffmpeg-*/
+
 # Arquivos do projeto específicos (mantenha apenas os necessários)
 # Remova esta linha se quiser manter algum desses diretórios
 # !executaveis/  # Mantém executaveis se necessário
