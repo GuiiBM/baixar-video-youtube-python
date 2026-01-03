@@ -19,13 +19,23 @@ def print_colored(text, color="white"):
         "white": "\033[97m",
         "reset": "\033[0m"
     }
+    # Habilitar cores ANSI no Windows 10+
     if platform.system() == "Windows":
-        print(text)
+        try:
+            import colorama
+            colorama.init()
+            print(f"{colors.get(color, colors['white'])}{text}{colors['reset']}")
+        except ImportError:
+            # Fallback sem cores
+            print(text)
     else:
         print(f"{colors.get(color, colors['white'])}{text}{colors['reset']}")
 
-def run_command(cmd, shell=True):
+def run_command(cmd, shell=None):
     try:
+        # Usar shell=True apenas no Windows para compatibilidade
+        if shell is None:
+            shell = platform.system() == "Windows"
         result = subprocess.run(cmd, shell=shell, capture_output=True, text=True)
         return result.returncode == 0, result.stdout, result.stderr
     except Exception as e:
@@ -83,26 +93,29 @@ def main():
     print_colored("\n[3/5] Atualizando pip...", "yellow")
     run_command(f"{python_venv} -m pip install --upgrade pip --quiet")
     
-    # [4/5] Instalar Flask
-    print_colored("\n[4/5] Instalando Flask...", "yellow")
-    success, _, _ = run_command(f"{pip_cmd} install Flask>=2.3.3 --quiet")
-    if not success:
-        print_colored("[ERRO] Falha ao instalar Flask", "red")
-        input("Pressione Enter para sair...")
-        sys.exit(1)
-    print_colored("Flask instalado com sucesso!", "green")
+    # [4/6] Instalar todas as dependências Python
+    print_colored("\n[4/5] Instalando dependências Python...", "yellow")
+    dependencies = [
+        "Flask>=2.3.3",
+        "yt-dlp>=2024.1.0",
+        "requests>=2.31.0",
+        "urllib3>=2.0.0"
+    ]
     
-    # [5/5] Instalar yt-dlp
-    print_colored("\n[5/5] Instalando yt-dlp...", "yellow")
-    success, _, _ = run_command(f"{pip_cmd} install yt-dlp>=2024.1.0 --quiet")
-    if not success:
-        print_colored("[ERRO] Falha ao instalar yt-dlp", "red")
-        input("Pressione Enter para sair...")
-        sys.exit(1)
-    print_colored("yt-dlp instalado com sucesso!", "green")
+    if system == "Windows":
+        dependencies.append("colorama>=0.4.6")
     
-    # [6/6] Instalar FFmpeg
-    print_colored("\n[6/6] Instalando FFmpeg...", "yellow")
+    for dep in dependencies:
+        print_colored(f"Instalando {dep.split('>=')[0]}...", "white")
+        success, _, _ = run_command(f"{pip_cmd} install {dep} --quiet")
+        if not success:
+            print_colored(f"[ERRO] Falha ao instalar {dep.split('>=')[0]}", "red")
+            input("Pressione Enter para sair...")
+            sys.exit(1)
+    
+    print_colored("Todas as dependências Python instaladas!", "green")
+    # [5/6] Instalar FFmpeg
+    print_colored("\n[5/5] Instalando FFmpeg...", "yellow")
     
     if system == "Windows":
         # Windows - baixar FFmpeg
@@ -117,7 +130,9 @@ def main():
             # Encontrar e copiar ffmpeg.exe
             for root, dirs, files in os.walk("."):
                 if "ffmpeg.exe" in files:
-                    shutil.copy(os.path.join(root, "ffmpeg.exe"), "ffmpeg.exe")
+                    src_path = os.path.join(root, "ffmpeg.exe")
+                    if not os.path.exists("ffmpeg.exe"):
+                        shutil.copy(src_path, "ffmpeg.exe")
                     break
             
             # Limpar arquivos temporários
@@ -161,6 +176,19 @@ def main():
     print_colored("========================================", "green")
     print_colored("\nTodas as dependências instaladas!", "white")
     print_colored("Agora você pode baixar vídeos em alta qualidade.", "white")
+    
+    # Criar arquivo requirements.txt
+    print_colored("\nCriando requirements.txt...", "white")
+    requirements_content = """Flask>=2.3.3
+yt-dlp>=2024.1.0
+requests>=2.31.0
+urllib3>=2.0.0
+colorama>=0.4.6
+"""
+    
+    with open("requirements.txt", "w", encoding="utf-8") as f:
+        f.write(requirements_content)
+    print_colored("requirements.txt criado!", "green")
     
     if system == "Windows":
         print_colored("\nPróximo passo: Execute INICIAR.bat", "white")

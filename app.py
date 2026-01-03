@@ -113,6 +113,37 @@ HTML = """
         transform: rotate(360deg);
       }
     }
+    .progress-container {
+      margin-top: 16px;
+      display: none;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #1f2937;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+    .progress-text {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .time-counter {
+      font-size: 11px;
+      color: #22c55e;
+      margin-top: 4px;
+      text-align: center;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -143,6 +174,14 @@ HTML = """
       </button>
     </form>
 
+    <div class="progress-container" id="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">Preparando download...</div>
+      <div class="time-counter" id="time-counter"></div>
+    </div>
+
     {% if status %}
       <div class="status ok">{{ status }}</div>
     {% elif error %}
@@ -157,13 +196,70 @@ HTML = """
     const button = document.getElementById('download-button');
     const btnText = document.querySelector('.btn-text');
     const spinner = document.getElementById('btn-spinner');
+    const progressContainer = document.getElementById('progress-container');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const timeCounter = document.getElementById('time-counter');
+
+    let progressInterval;
+    let timeInterval;
+    let remainingTime = 25; // tempo estimado em segundos
 
     form.addEventListener('submit', () => {
-      // desabilita botao e mostra loading
       button.disabled = true;
       if (btnText) btnText.textContent = 'Baixando...';
       if (spinner) spinner.style.display = 'inline-block';
+      
+      if (progressContainer) {
+        progressContainer.style.display = 'block';
+        simulateProgress();
+        startTimeCounter();
+      }
     });
+
+    function simulateProgress() {
+      let progress = 0;
+      const stages = [
+        { percent: 10, text: 'Conectando ao YouTube...', duration: 3 },
+        { percent: 25, text: 'Obtendo informações do vídeo...', duration: 4 },
+        { percent: 40, text: 'Preparando download...', duration: 3 },
+        { percent: 60, text: 'Baixando vídeo...', duration: 8 },
+        { percent: 80, text: 'Processando arquivo...', duration: 5 },
+        { percent: 95, text: 'Finalizando...', duration: 2 }
+      ];
+      
+      let currentStage = 0;
+      
+      function nextStage() {
+        if (currentStage < stages.length) {
+          const stage = stages[currentStage];
+          
+          if (progressFill) progressFill.style.width = stage.percent + '%';
+          if (progressText) progressText.textContent = stage.text;
+          
+          currentStage++;
+          setTimeout(nextStage, stage.duration * 1000);
+        }
+      }
+      
+      nextStage();
+    }
+
+    function startTimeCounter() {
+      timeInterval = setInterval(() => {
+        if (remainingTime > 0) {
+          const minutes = Math.floor(remainingTime / 60);
+          const seconds = remainingTime % 60;
+          const timeStr = minutes > 0 ? `${minutes}:${seconds.toString().padStart(2, '0')}` : `${seconds}s`;
+          
+          if (timeCounter) timeCounter.textContent = `Tempo restante: ${timeStr}`;
+          remainingTime--;
+        } else {
+          if (timeCounter) timeCounter.textContent = 'Finalizando...';
+          clearInterval(timeInterval);
+        }
+      }, 1000);
+    }
   </script>
 </body>
 </html>
@@ -205,6 +301,17 @@ def index():
                     "merge_output_format": "mp4",
                     "prefer_free_formats": False,
                     "format_sort": ["res", "ext:mp4", "codec:h264"],
+                    "http_headers": {
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                        "Accept-Language": "en-us,en;q=0.5",
+                        "Accept-Encoding": "gzip,deflate",
+                        "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.7",
+                        "Connection": "keep-alive"
+                    },
+                    "extractor_retries": 3,
+                    "fragment_retries": 3,
+                    "retry_sleep_functions": {"http": lambda n: min(4 ** n, 60)}
                 }
                 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -238,5 +345,6 @@ def index():
 
 
 if __name__ == "__main__":
-    # host=0.0.0.0 se quiser abrir em outros devices da rede
-    app.run(debug=True)
+    import os
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='127.0.0.1', port=5000)

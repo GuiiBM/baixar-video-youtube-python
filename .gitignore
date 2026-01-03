@@ -1,11 +1,8 @@
-# Crie/edit .gitignore
-cat > .gitignore << 'EOF'
-# Ambiente virtual
+# Ambiente Virtual Python
 venv/
 env/
 .venv/
-venv*/
-ENV/
+.env/
 
 # Arquivos Python
 __pycache__/
@@ -13,54 +10,30 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
+
+# Downloads e arquivos temporários
 downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+*.zip
+*.tar.gz
+*.exe
+*.dll
 
-# PyInstaller
-*.manifest
-*.spec
+# FFmpeg (será baixado automaticamente)
+ffmpeg.exe
+ffmpeg/
+ffmpeg-*/
 
-# Installer logs
+# Dependências instaladas (arquivos órfãos)
+=*
+[0-9]*.[0-9]*.[0-9]*
+
+# Logs e cache
+*.log
+.cache/
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# IDE
+# IDE e editores
 .vscode/
 .idea/
 *.swp
@@ -69,39 +42,9 @@ ipython_config.py
 
 # Sistema operacional
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Logs
-*.log
-logs/
-
-# Configurações locais
-config_local.py
+# Arquivos de configuração local
 .env
-.env.local
-
-# Diretórios de download temporários
-downloads/
-temp/
-tmp/
-
-# FFmpeg executáveis
-ffmpeg.exe
-ffprobe.exe
-ffplay.exe
-ffmpeg
-ffprobe
-ffplay
-ffmpeg/
-ffmpeg-*/
-
-# Arquivos do projeto específicos (mantenha apenas os necessários)
-# Remova esta linha se quiser manter algum desses diretórios
-# !executaveis/  # Mantém executaveis se necessário
-# !scripts/      # Mantém scripts se necessário
-EOF
+config.local.*
